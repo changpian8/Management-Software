@@ -171,10 +171,10 @@ Void WeAlumni::StfInfoPage::ChangeInfo_Click(System::Object^ sender, System::Eve
 Void WeAlumni::StfInfoPage::AcceptButton_Click(System::Object^ sender, System::EventArgs^ e) {
     int status = -1;
     String^ command = "UPDATE Staff " +
-        "SET    Dept = '" + cmb_Dept->Text + "', " +
-        "Position = '" + cmb_Posi->Text + "', " +
-        "Auth = '" + cmb_Auth->Text + "' " +
-        "WHERE  MemId = '" + _MemId + "';";
+                      "SET    Dept = '" + cmb_Dept->Text + "', " +
+                             "Position = '" + cmb_Posi->Text + "', " +
+                             "Auth = '" + cmb_Auth->Text + "' " +
+                      "WHERE  MemId = '" + _MemId + "';";
     try {
         status = _database->UpdateData(command);
     }
@@ -282,11 +282,11 @@ Void WeAlumni::StfInfoPage::RecordButton_Click(System::Object^ sender, System::E
 Void WeAlumni::StfInfoPage::UpdateDataGridView() {
     int status = -1;
     String^ command = "SELECT R.Id      AS 'Recording ID', " +
-        "R.Time    As 'Recording Time', " +
-        "R.MemId   AS 'Member ID', " +
-        "R.MemName AS 'Member Name', " +
-        "R.Action  AS 'Action' " +
-        "FROM   Record R";
+                             "R.Time    As 'Recording Time', " +
+                             "R.MemId   AS 'Member ID', " +
+                             "R.MemName AS 'Member Name', " +
+                             "R.Action  AS 'Action' " +
+                      "FROM   Record R";
     BindingSource^ bSource = gcnew BindingSource();
     try {
         status = _database->ReadDataAdapter(command);
