@@ -90,9 +90,6 @@
     <ClCompile Include="StfInfoPage.cpp">
       <Filter>Source Files\Staff</Filter>
     </ClCompile>
-    <ClCompile Include="StartPage.cpp">
-      <Filter>Source Files\System</Filter>
-    </ClCompile>
     <ClCompile Include="TreAddPage.cpp">
       <Filter>Source Files\Treasury</Filter>
     </ClCompile>
@@ -106,6 +103,21 @@
       <Filter>Source Files\System</Filter>
     </ClCompile>
     <ClCompile Include="DatabaseEncryptionAndDecryption.cpp">
+      <Filter>Source Files\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="SysChangeUserInfoPage.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="SysInfoPage.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="StartPage2.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabasePrecheck.cpp">
+      <Filter>Source Files\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="DatabasePrecheckPrompt.cpp">
       <Filter>Source Files\Database</Filter>
     </ClCompile>
   </ItemGroup>
@@ -157,6 +169,24 @@
     </ClInclude>
     <ClInclude Include="PublicUserInfo.h">
       <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SysChangeUserInfoPage.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SysInfoPage.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="StartPage2.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="SysForgotPassword.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabasePrecheck.h">
+      <Filter>Header Files\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="DatabasePrecheckPrompt.h">
+      <Filter>Header Files\Database</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
