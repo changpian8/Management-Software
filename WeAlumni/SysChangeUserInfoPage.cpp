@@ -70,9 +70,9 @@ Void WeAlumni::SysChangeUserInfoPage::UpdateInfo() {
 Void WeAlumni::SysChangeUserInfoPage::btn_Confirm_Click(System::Object^ sender, System::EventArgs^ e) {
     int status = -1;
     String^ command = "UPDATE Admin " +
-        "SET    Username = '" + txt_changeUser->Text + "', " +
-        "Password = '" + txt_changePass->Text + "' " +
-        "WHERE  StfId = '" + _stfId + "';";
+                      "SET    Username = '" + txt_changeUser->Text + "', " +
+                             "Password = '" + txt_changePass->Text + "' " +
+                      "WHERE  StfId = '" + _stfId + "';";
     try {
         status = _database->UpdateData(command);
     }
