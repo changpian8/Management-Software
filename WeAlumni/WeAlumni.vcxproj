@@ -113,6 +113,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite">
@@ -127,10 +130,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DatabasePrecheckPrompt.cpp" />
+    <ClCompile Include="DatabasePrecheck.cpp" />
     <ClCompile Include="Database.cpp" />
     <ClCompile Include="DatabaseEncryptionAndDecryption.cpp" />
-    <ClCompile Include="DatabasePrecheck.cpp" />
+    <ClCompile Include="DBImportExport.cpp" />
+    <ClCompile Include="LoginPage.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="MemAddPage.cpp" />
@@ -151,10 +155,11 @@
     <ClInclude Include="Database.h" />
     <ClInclude Include="DatabaseEncryptionAndDecryption.h" />
     <ClInclude Include="DatabaseParam.h" />
-    <ClInclude Include="DatabasePrecheck.h" />
-    <ClInclude Include="DatabasePrecheckPrompt.h">
+    <ClInclude Include="DatabasePrecheck.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="DBImportExport.h" />
+    <ClInclude Include="LoginPage.h" />
     <ClInclude Include="MainWindow.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -200,8 +205,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DatabasePrecheckPrompt.resx">
-      <DependentUpon>DatabasePrecheckPrompt.h</DependentUpon>
+    <EmbeddedResource Include="DatabasePrecheck.resx">
+      <DependentUpon>DatabasePrecheck.h</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MemInfoPage.resx">
       <DependentUpon>MemInfoPage.h</DependentUpon>
