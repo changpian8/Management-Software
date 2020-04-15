@@ -7,6 +7,7 @@
  *
  * @author: Rui Jia
  * Revised: 4/12/20
+ *          4/15/20 add AddNewRecord();
  *
  */
 
@@ -213,10 +214,10 @@ Void WeAlumni::StfInfoPage::btn_ChangeInfo_Click(System::Object^ sender, System:
 Void WeAlumni::StfInfoPage::btn_Accpet_Click(System::Object^ sender, System::EventArgs^ e) {
     int status = -1;
     String^ command = "UPDATE Staff " +
-                      "SET    Dept = '" + cmb_Dept->Text + "', " +
-                             "Position = '" + cmb_Posi->Text + "', " +
-                             "Auth = '" + cmb_Auth->Text + "' " +
-                      "WHERE  MemId = '" + _MemId + "';";
+        "SET    Dept = '" + cmb_Dept->Text + "', " +
+        "Position = '" + cmb_Posi->Text + "', " +
+        "Auth = '" + cmb_Auth->Text + "' " +
+        "WHERE  MemId = '" + _MemId + "';";
     try {
         status = _database->UpdateData(command);
     }
@@ -230,6 +231,8 @@ Void WeAlumni::StfInfoPage::btn_Accpet_Click(System::Object^ sender, System::Eve
         UpdateInfo();
         ChangeTxtInvisible();
         ChangeLabelVisible();
+        AddNewRecord();
+        UpdateDataGridView();
         lbl_Error->Text = "Updata Successful!";
         lbl_Error->ForeColor = Color::Green;
         lbl_Error->Visible = true;
@@ -317,11 +320,11 @@ Void WeAlumni::StfInfoPage::btn_Close_Click(System::Object^ sender, System::Even
 Void WeAlumni::StfInfoPage::UpdateDataGridView() {
     int status = -1;
     String^ command = "SELECT Record.Id      AS 'Recording ID', " +
-                             "Record.Time    As 'Recording Time', " +
-                             "Record.MemId   AS 'Member ID', " +
-                             "Record.MemName AS 'Member Name', " +
-                             "Record.Action  AS 'Action' " +
-                      "FROM   Record WHERE Record.MemId = '" + _MemId + "' ORDER BY Record.Id ASC;";
+        "Record.Time    As 'Recording Time', " +
+        "Record.MemId   AS 'Member ID', " +
+        "Record.MemName AS 'Member Name', " +
+        "Record.Action  AS 'Action' " +
+        "FROM   Record WHERE Record.MemId = '" + _MemId + "' ORDER BY Record.Id ASC;";
     BindingSource^ bSource = gcnew BindingSource();
     try {
         status = _database->ReadDataAdapter(command);
@@ -348,8 +351,43 @@ Void WeAlumni::StfInfoPage::UpdateDataGridView() {
  * @return None
  */
 Void WeAlumni::StfInfoPage::dgv_Staff_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
-    RecInfoPage^ recInfoPage = gcnew RecInfoPage(Convert::ToInt32(dgv_Staff->CurrentRow->Cells[0]->Value));
+    RecInfoPage^ recInfoPage = gcnew RecInfoPage(Convert::ToInt32(dgv_Staff->CurrentRow->Cells[0]->Value), _pui);
     recInfoPage->ShowDialog();
 }
 
+/*
+ * AddNewRecord(System::Object^ sender, System::EventArgs^ e)
+ * When click button "Add new record"£¬ add new recoding data to Record table.
+ * @param System::Object^ sender, System::EventArgs^ e
+ * @return None
+ */
+Void WeAlumni::StfInfoPage::AddNewRecord() {
+    int status = -1;
+    int RecordId = _database->GetNextId(Database::DatabaseTable::Record);
+    int MemId = Int32::Parse(lbl_MemId->Text);
+    String^ Name = lbl_Name->Text;
+    String^ time = _database->GetSystemTime();
+    String^ action = "Staff " + _StfId + " changed information to Member " + MemId;
+    String^ command = "INSERT INTO Record VALUES(" + RecordId + "," +
+        _StfId + "," +
+        MemId + ", '" +
+        Name + "', '" +
+        time + "', '" +
+        action + "');";
+    try {
+        status = _database->InsertData(command);
+    }
+    catch (Exception^ exception) {
+        lbl_Error->Text = exception->Message;
+        return;
+    }
+
+    if (status > 0) {
+        lbl_Error->Text = "Update success";
+    }
+    else {
+        lbl_Error->Text = "ERRPR";
+        lbl_Error->ForeColor = Color::Red;
+    }
+}
 
