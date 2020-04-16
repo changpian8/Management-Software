@@ -703,7 +703,7 @@ namespace WeAlumni {
 		Void ChangeLabelVisible();
 		Void ChangeLabelInvisible();
 		Void AuthInvisible();
-		Void AddNewRecord();
+		Void DeleteRecord();
 		Void dgv_Staff_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e);
 		Void btn_ChangeInfo_Click(System::Object^ sender, System::EventArgs^ e);
 		Void btn_Accpet_Click(System::Object^ sender, System::EventArgs^ e);

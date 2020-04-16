@@ -7,7 +7,7 @@
  *
  * @author: Rui Jia
  * Revised: 4/12/20
- *          4/15/20 add AddNewRecord();
+ *          4/15/20 add DeleteRecord();
  *
  */
 
@@ -227,11 +227,32 @@ Void WeAlumni::StfInfoPage::btn_Accpet_Click(System::Object^ sender, System::Eve
         return;
     }
 
+    int status2 = 0;
+    int MemId = Int32::Parse(lbl_MemId->Text);
+    String^ action = " changed Member " + MemId + " information: ";
     if (status > 0) {
+        if (lbl_Dept->Text != cmb_Dept->Text) {
+            status2++;
+            action += "Department";
+        }
+        if (lbl_Posi->Text != cmb_Posi->Text) {
+            if (status2 != 0) {
+                action += ", ";
+            }
+            action += "Position";
+            status2++;
+        }
+        if (lbl_Auth->Text != cmb_Auth->Text) {
+            if (status2 != 0) {
+                action += ", ";
+            }
+            action += "Auth";
+            status2++;
+        }
+
         UpdateInfo();
         ChangeTxtInvisible();
         ChangeLabelVisible();
-        AddNewRecord();
         UpdateDataGridView();
         lbl_Error->Text = "Updata Successful!";
         lbl_Error->ForeColor = Color::Green;
@@ -239,6 +260,9 @@ Void WeAlumni::StfInfoPage::btn_Accpet_Click(System::Object^ sender, System::Eve
         btn_Accpet->Visible = false;
         btn_Cancle->Visible = false;
         btn_DeleteInfo->Enabled = true;
+        if (status2 != 0) {
+            WeAlumni::Database::Log(_StfId, action);
+        }
     }
     else {
         lbl_Error->Text = "ERROR";
@@ -291,6 +315,8 @@ Void WeAlumni::StfInfoPage::btn_Delete_Click(System::Object^ sender, System::Eve
     }
 
     if (status > 0) {
+        DeleteRecord();
+        WeAlumni::Database::Log(_StfId, "Deleted Member");
         this->Close();
     }
     else {
@@ -345,49 +371,35 @@ Void WeAlumni::StfInfoPage::UpdateDataGridView() {
 }
 
 /*
+ * DeleteRecord()
+ * This method will delete the info of record table.
+ * @param None
+ * @return None
+ */
+Void WeAlumni::StfInfoPage::DeleteRecord() {
+    int status = -1;
+    String^ cmd = "DELETE FROM RECORD WHERE MemId = " + _MemId;
+
+    try {
+        status = _database->DeleteData(cmd);
+    }
+    catch (Exception^ exception) {
+        lbl_Error->ForeColor = System::Drawing::Color::Red;
+        lbl_Error->Text = exception->Message;
+        lbl_Error->Visible = true;
+        return;
+    }
+}
+
+/*
  * dgv_Staff_CellContentClick()
  * by double clicking specific row of dgv_Staff, a corresponding Record Info page will show up.
  * @param None
  * @return None
  */
 Void WeAlumni::StfInfoPage::dgv_Staff_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
-    RecInfoPage^ recInfoPage = gcnew RecInfoPage(Convert::ToInt32(dgv_Staff->CurrentRow->Cells[0]->Value), _pui);
+    RecInfoPage^ recInfoPage = gcnew RecInfoPage(Convert::ToInt32(dgv_Staff->CurrentRow->Cells[0]->Value));
     recInfoPage->ShowDialog();
 }
 
-/*
- * AddNewRecord(System::Object^ sender, System::EventArgs^ e)
- * When click button "Add new record"£¬ add new recoding data to Record table.
- * @param System::Object^ sender, System::EventArgs^ e
- * @return None
- */
-Void WeAlumni::StfInfoPage::AddNewRecord() {
-    int status = -1;
-    int RecordId = _database->GetNextId(Database::DatabaseTable::Record);
-    int MemId = Int32::Parse(lbl_MemId->Text);
-    String^ Name = lbl_Name->Text;
-    String^ time = _database->GetSystemTime();
-    String^ action = "Staff " + _StfId + " changed information to Member " + MemId;
-    String^ command = "INSERT INTO Record VALUES(" + RecordId + "," +
-        _StfId + "," +
-        MemId + ", '" +
-        Name + "', '" +
-        time + "', '" +
-        action + "');";
-    try {
-        status = _database->InsertData(command);
-    }
-    catch (Exception^ exception) {
-        lbl_Error->Text = exception->Message;
-        return;
-    }
-
-    if (status > 0) {
-        lbl_Error->Text = "Update success";
-    }
-    else {
-        lbl_Error->Text = "ERRPR";
-        lbl_Error->ForeColor = Color::Red;
-    }
-}
 
