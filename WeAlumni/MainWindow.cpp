@@ -11,7 +11,8 @@
  *          4/12/20 add staff MainWindow and auth control for staff and member
  *          4/15/20 bug fix
  *          4/21/20 Added OPT MainWindow Part(Xiangdong Che)
- *
+ *          5/1/20 ui & auth update record & order
+ *          5/02/20 Changed layout of OPT part(Xiangdong Che)
  */
 
 using namespace System;
@@ -52,10 +53,15 @@ Void WeAlumni::MainWindow::Initialize() {
     stf_GeneralInformation();
     stf_UpdateDataGridView(STF_SELECT_ALL);
     stf_CheckAuth();
+    Rec_GeneralInformation();
+    Rec_UpdateDataGridView(REC_SELECT_ALL);
+    Rec_CheckAuth();
     ord_UpdateDataGridView(ORD_SELECT_ALL);
     ord_GeneralInformation();
+    ord_CheckAuth();
     OPT_UpdateDataGridView(OPT_SELECT_ALL);
     OPT_GeneralInformation();
+    OPT_CheckAuth();
 }
 
 /*
@@ -93,7 +99,7 @@ Void WeAlumni::MainWindow::mem_btn_Search_Click(System::Object^ sender, System::
     if (searchAuth->Length)   vec.push_back(7);
     if (vec.size() == 0) {
         mem_lbl_error->ForeColor = System::Drawing::Color::Red;
-        mem_lbl_error->Text = "CANNOT FIND MEMBER";
+        mem_lbl_error->Text = "≤ÈŒﬁ¥À»À";
         mem_lbl_error->Visible = true;
         mem_dataGridView1->DataSource = nullptr;
         return;
@@ -275,7 +281,7 @@ Void WeAlumni::MainWindow::stf_btn_Search_Click(System::Object^ sender, System::
     String^ Dept = stf_cmb_Dept->Text;
     String^ Auth = stf_cmb_Auth->Text;
     String^ command = "SELECT Staff.MemId    AS 'ID', " +
-        "Member.Name    As 'ÂßìÂêç', " +
+        "Member.Name    As '–’√˚', " +
         "Member.Gender  AS 'Gender', " +
         "Member.Email   AS 'Email', " +
         "Staff.Dept     As 'Department', " +
@@ -417,13 +423,27 @@ Void WeAlumni::MainWindow::stf_UpdateDataGridView(String^ command) {
 /*
  *  Order
  */
+
  /*
- * ord_btn_Search_Click
- *
- * This method will try to search from Record table for the record of this order
- * and related info from member and item.
- * Then update record to ord_DataGridView
- */
+  * ord_CheckAuth()
+  * Check order Auth. If Level == 1 or 2, user can't see the order mainWindow.
+  * @param None
+  * @return None
+  */
+Void WeAlumni::MainWindow::ord_CheckAuth() {
+    if (_Auth == PublicUserInfo::Auth::Level_1 || _Auth == PublicUserInfo::Auth::Level_2) {
+        tsm_order->Visible = false;
+        pan_order->Visible = false;
+    }
+}
+
+/*
+* ord_btn_Search_Click
+*
+* This method will try to search from Record table for the record of this order
+* and related info from member and item.
+* Then update record to ord_DataGridView
+*/
 Void WeAlumni::MainWindow::ord_btn_Search_Click(System::Object^ sender, System::EventArgs^ e) {
     String^ o_id = ord_txt_ordId->Text;
     String^ status = ord_cmb_Status->Text;
@@ -436,7 +456,7 @@ Void WeAlumni::MainWindow::ord_btn_Search_Click(System::Object^ sender, System::
         " Member.Email AS 'Email'," + "Item.Name AS 'ItmName'," +
         " Orders.Amount AS 'Amount'," + "Item.Price AS 'ItmPrice'," +
         " Orders.Comment AS 'Comment'" +
-        "FROM Orders, Member, Item WHERE ";
+        "FROM Orders, Member, Item WHERE Orders.MemId = Member.Id AND Orders.ItemId = Item.Id AND ";
     String^ cmd2 = "";
 
     std::vector<int> vec;
@@ -467,7 +487,7 @@ Void WeAlumni::MainWindow::ord_btn_Search_Click(System::Object^ sender, System::
         }
         flag = true;
     }
-    cmd += cmd2 + " ORDER BY Member.Id ASC;";
+    cmd += cmd2 + " ORDER BY Orders.Id ASC;";
     ord_UpdateDataGridView(cmd);
     ord_GeneralInformation();
 }
@@ -577,6 +597,19 @@ Void WeAlumni::MainWindow::ord_GeneralInformation() {
 /*
  *  Record
  */
+ 
+ /*
+  * Rec_CheckAuth()
+  * Check order Auth. If Level == 1 2, 3, user can't see the record mainWindow.
+  * @param None
+  * @return None
+  */
+Void WeAlumni::MainWindow::Rec_CheckAuth() {
+    if (_Auth == PublicUserInfo::Auth::Level_1 || _Auth == PublicUserInfo::Auth::Level_2 || _Auth == PublicUserInfo::Auth::Level_3) {
+        tsm_record->Visible = false;
+        pan_record->Visible = false;
+    }
+}
  /*
  * Rec_btn_Search_Click
  *
@@ -588,10 +621,10 @@ Void WeAlumni::MainWindow::Rec_btn_Search_Click(System::Object^ sender, System::
     String^ stfId = Rec_txt_StfId->Text;
     String^ name = Rec_txt_MemName->Text;
     String^ dept = Rec_txt_department->Text;
-    String^ cmd = "SELECT Record.Id AS 'RecordId', Record.Time AS 'Time'," +
-        " Record.StfId AS 'StfId'," + " Record.Memname AS 'MemName'," +
-        " Staff.Dept AS 'Department'," + "Staff.Position AS 'Position'," +
-        " Record.Action AS 'Action'" + "FROM Record, Staff WHERE ";
+    String^ cmd = "SELECT Record.Id AS 'ID', Record.Time AS 'µ«º« ±º‰'," +
+        " Record.StfId AS '‘±π§±‡∫≈'," + " Record.Memname AS '‘±π§–’√˚'," +
+        " Staff.Dept AS 'À˘‘⁄≤ø√≈'," + "Staff.Position AS '÷∞Œª÷∞ŒÒ'," +
+        " Record.Action AS '≤Ÿ◊˜ƒ⁄»›'" + "FROM Record, Staff WHERE Record.MemId = Staff.MemId AND ";
     String^ cmd1 = "";
 
     std::vector<int> vec;
@@ -601,9 +634,10 @@ Void WeAlumni::MainWindow::Rec_btn_Search_Click(System::Object^ sender, System::
     if (dept->Length)            vec.push_back(3);
     if (vec.size() == 0) {
         Rec_lbl_Error->ForeColor = System::Drawing::Color::Red;
-        Rec_lbl_Error->Text = "No RECORD FOUND";
+        Rec_lbl_Error->Text = "Œ¥’“µΩº«¬º";
         Rec_lbl_Error->Visible = true;
         Rec_dataGridView->DataSource = nullptr;
+        return;
     }
 
     bool flag = false;
@@ -613,7 +647,7 @@ Void WeAlumni::MainWindow::Rec_btn_Search_Click(System::Object^ sender, System::
         case 0: cmd1 += "Record.Id = '" + Convert::ToInt32(recId) + "' "; break;
         case 1: cmd1 += "Record.StfId = '" + Convert::ToInt32(stfId) + "' "; break;
         case 2: cmd1 += "Record.MemName = '" + name + "' "; break;
-        case 4: cmd1 += "Staff.Dept = '" + dept + "' "; break;
+        case 3: cmd1 += "Staff.Dept = '" + dept + "' "; break;
         }
         flag = true;
     }
@@ -639,10 +673,10 @@ Void WeAlumni::MainWindow::Rec_btn_Clear_Click(System::Object^ sender, System::E
 
 /*
  * Rec_dataGridView_CellDoubleClick
- * by double clicking specific row of ord_dataGridView, a corresponding RecInfoPage will show up.
+ * by double clicking specific row of recc_dataGridView, a corresponding RecInfoPage will show up.
  */
 Void WeAlumni::MainWindow::Rec_dataGridView_CellContentClick(System::Object^ sender, System::Windows::Forms::DataGridViewCellEventArgs^ e) {
-    RecInfoPage^ rip = gcnew RecInfoPage(Convert::ToInt32(ord_dataGridView->CurrentRow->Cells[0]->Value));
+    RecInfoPage^ rip = gcnew RecInfoPage(Convert::ToInt32(Rec_dataGridView->CurrentRow->Cells[0]->Value),_pui);
     rip->ShowDialog();
     Rec_UpdateDataGridView(REC_SELECT_ALL);
     Rec_GeneralInformation();
@@ -667,7 +701,6 @@ Void WeAlumni::MainWindow::Rec_UpdateDataGridView(String^ command) {
         Rec_lbl_Error->Visible = true;
         return;
     }
-
     if (status > 0) {
         Rec_lbl_Error->Visible = false;
         bSource->DataSource = database->dataTable;
@@ -675,7 +708,7 @@ Void WeAlumni::MainWindow::Rec_UpdateDataGridView(String^ command) {
     }
     else {
         Rec_lbl_Error->ForeColor = System::Drawing::Color::Red;
-        Rec_lbl_Error->Text = "CANNOT FIND RECORD";
+        Rec_lbl_Error->Text = "Œ¥’“µΩº«¬º";
         Rec_lbl_Error->Visible = true;
         Rec_dataGridView->DataSource = nullptr;
     }
@@ -704,7 +737,7 @@ Void WeAlumni::MainWindow::Rec_GeneralInformation() {
         rec_lbl_Count->Text = database->dataReader->GetInt32(0).ToString();
     }
     else {
-        Rec_lbl_Error->Text = "Can't find data";
+        Rec_lbl_Error->Text = "Œﬁœ‡πÿ ˝æ›";
         Rec_lbl_Error->Visible = true;
     }
     database->dataReader->Close();
@@ -762,18 +795,17 @@ Void WeAlumni::MainWindow::OPT_btn_Search_Click(System::Object^ sender, System::
     String^ MemId = OPT_txt_MemId->Text;
     String^ MemName = OPT_txt_MemName->Text;
     String^ CardNumber = OPT_txt_CardNumber->Text;
-
-    String^ command = "SELECT OPT.Id                                                        AS 'OPTÁºñÂè∑', " +
-        "OPT.Status                                                    AS 'Áä∂ÊÄÅ', " +
-        "(SELECT Member.Name FROM Member WHERE Member.Id = OPT.MemId)  AS 'ÊàêÂëòÂßìÂêç', " +
-        "(SELECT Member.Name FROM Member " +
-        "INNER JOIN Staff INNER JOIN OPT " +
-        "WHERE Member.Id = Staff.MemId AND Staff.MemId = OPT.StfId)    AS 'ÂëòÂ∑•ÂßìÂêç', " +
-        "OPT.StartDate                                                 AS 'ÂºÄÂßãÊó•Êúü', " +
-        "OPT.EndDate                                                   AS 'ÁªìÊùüÊó•Êúü', " +
-        "OPT.Title                                                     AS 'Â§¥Ë°î', " +
-        "OPT.Position                                                  AS 'ËÅå‰Ωç' " +
-        "FROM OPT INNER JOIN Member WHERE ";
+    String^ command = "SELECT OPT.Id                                                        AS 'OPT±‡∫≈', " +
+                             "OPT.Status                                                    AS '◊¥Ã¨', " +
+                             "(SELECT Member.Name FROM Member WHERE Member.Id = OPT.MemId)  AS '≥…‘±–’√˚', " +
+                             "(SELECT Member.Name FROM Member " +
+                             "INNER JOIN Staff INNER JOIN OPT " +
+                             "WHERE Member.Id = Staff.MemId AND Staff.MemId = OPT.StfId)    AS '‘±π§–’√˚', " +
+                             "OPT.StartDate                                                 AS 'ø™ º»’∆⁄', " +
+                             "OPT.EndDate                                                   AS 'Ω· ¯»’∆⁄', " +
+                             "OPT.Title                                                     AS 'Õ∑œŒ', " +
+                             "OPT.Position                                                  AS '÷∞Œª' " +
+                      "FROM OPT INNER JOIN Member WHERE ";
     String^ command2 = "";
 
     std::vector<int> vec;
@@ -784,6 +816,7 @@ Void WeAlumni::MainWindow::OPT_btn_Search_Click(System::Object^ sender, System::
     if (CardNumber->Length)    vec.push_back(4);
     if (vec.size() == 0) {
         OPT_UpdateDataGridView(OPT_SELECT_ALL);
+        OPT_lbl_Prompt_default->Visible = true;
         return;
     }
 
@@ -868,6 +901,22 @@ Void WeAlumni::MainWindow::OPT_GeneralInformation() {
 }
 
 /*
+<<<<<<< HEAD
+=======
+ * OPT_CheckAuth()
+ * Check auth of current user
+ * @param None
+ * @return None
+ */
+Void WeAlumni::MainWindow::OPT_CheckAuth() {
+    if (_Auth == PublicUserInfo::Auth::Level_1 || _Auth == PublicUserInfo::Auth::Level_2) {
+        tsm_OPT->Visible = false;
+        pan_OPT->Visible = false;
+    }
+}
+
+/*
+>>>>>>> a683c45b1dcc9c9aa910360d7978338217ec720e
  *  System
  */
 
